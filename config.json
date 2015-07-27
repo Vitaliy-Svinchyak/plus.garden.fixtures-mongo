@@ -1,0 +1,6 @@
+{
+  "fixtures-mongo": {
+    "uri": "mongodb://log:pass@localhost:27017/dbname",
+    "fixtures": {}
+  }
+}

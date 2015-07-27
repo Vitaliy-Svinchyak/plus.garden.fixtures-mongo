@@ -1,0 +1,26 @@
+{
+  "name": "plus.garden.fixtures-mongo",
+  "version": "0.0.3",
+  "description": "mongo fixtures loader for plus.garden",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mongo",
+    "fixtures"
+  ],
+  "author": "Vladimir Polyakov",
+  "license": "MIT",
+  "dependencies": {
+    "pow-mongodb-fixtures": "0.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linkshare/plus.garden.fixtures-mongo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/linkshare/plus.garden.fixtures-mongo/issues"
+  },
+  "homepage": "https://github.com/linkshare/plus.garden.fixtures-mongo#readme"
+}
