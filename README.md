@@ -26,8 +26,13 @@ Add config section to garden config
 
     "uri": "mongodb://user:password@localhost:27017/dbname",
 
-    "fixtures": "fixtures/mongo"  /fixtures folder
+    "fixtures": "fixtures/mongo"
 }
+```
+
+Create directory for storing fixtures
+```
+mkdir -p fixtures/mongo
 ```
 
 Usage
@@ -52,7 +57,7 @@ With the file below, 3 documents will be inserted into the 'users' collection an
 ```
 
 You can also load fixtures as an object where each document is keyed, in case you want to reference another document. This example uses the included `createObjectId` helper:
-
+*Note: install pow-mongodb-fixtures in project `npm install pow-mongodb-fixtures --save` to use `createObjectId` helper*
 ```javascript
     //users.js
     var id = require('pow-mongodb-fixtures').createObjectId;
