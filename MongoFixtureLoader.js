@@ -45,4 +45,4 @@ var MongoFixtureLoader = function (Garden, config, logger) {
 module.exports = MongoFixtureLoader;
 
 module.exports.$inject = ['Garden', 'config', 'Logger'];
-module.exports.$tags = ['garden.js', 'fixtures', 'loader'];
+module.exports.$tags = ['garden.js', 'fixtures', 'loader', 'loader.mongo'];
