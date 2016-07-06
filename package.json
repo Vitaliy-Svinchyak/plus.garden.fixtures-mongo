@@ -1,6 +1,6 @@
 {
   "name": "plus.garden.fixtures-mongo",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "mongo fixtures loader for plus.garden",
   "main": "index.js",
   "scripts": {
