@@ -23,8 +23,8 @@ let MongoFixtureLoader = function (Garden, config, logger) {
                 }
             }
         } else {
-            if (!isAbsolute(path)) {
-                resultPaths = config.get('root_dir') + '/' + path
+            if (!isAbsolute(paths)) {
+                resultPaths = config.get('root_dir') + '/' + paths
             }
         }
 
