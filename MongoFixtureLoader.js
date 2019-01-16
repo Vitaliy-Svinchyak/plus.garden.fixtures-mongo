@@ -1,48 +1,77 @@
-var MongoFixtureLoader = function (Garden, config, logger) {
+let MongoFixtureLoader = function (Garden, config, logger) {
 
-    var wait = Garden.wait;
-    var dbUri = config.get('fixtures-mongo:uri');
-    var fixtures = require('pow-mongodb-fixtures').connect(dbUri);
-    var paths = config.get('fixtures-mongo:fixtures');
+    let wait = Garden.wait
+    let dbUri = config.get('fixtures-mongo:uri')
+    let fixtures = require('pow-mongodb-fixtures').connect(dbUri)
+    let paths = config.get('fixtures-mongo:fixtures')
+    let fs = require('fs')
 
-    function isAbsolute(path) {
-        return /^\//.test(path);
+    function isAbsolute (path) {
+        return /^\//.test(path)
     }
 
-    function loadPath(path) {
+    function getListOfFilesInPaths () {
+        let resultPaths
 
-        if (!isAbsolute(path)) {
-            path = config.get('root_dir') + '/' + path;
+        if (paths instanceof Object) {
+            resultPaths = []
+            for (let key in paths) {
+                let path = paths[key]
+
+                if (!isAbsolute(path)) {
+                    resultPaths.push(config.get('root_dir') + '/' + path)
+                }
+            }
+        } else {
+            if (!isAbsolute(path)) {
+                resultPaths = config.get('root_dir') + '/' + path
+            }
         }
 
-        logger.info('fixtures: ' + path);
-        wait.forMethod(fixtures, 'load', path);
-        logger.info('success');
+        return resultPaths
+    }
+
+    function loadPath (path) {
+        logger.info('fixtures: ' + path)
+        wait.forMethod(fixtures, 'load', path)
+        logger.info('success')
     }
 
     this.load = function () {
+        logger.info('Loading fixtures: ' + dbUri)
+        let formattedPaths = getListOfFilesInPaths()
 
-        logger.info('Loading fixtures: ' + dbUri);
-
-        if (paths instanceof Object) {
-            for (var key in paths) {
-                var path = paths[key];
-                loadPath(path);
+        if (formattedPaths instanceof Object) {
+            for (let path of paths) {
+                loadPath(path)
             }
         } else {
-            loadPath(paths);
+            loadPath(formattedPaths)
         }
-    };
+    }
 
     this.drop = function () {
-        logger.info('Dropping fixtures: ' + dbUri);
-        wait.forMethod(fixtures, 'clear');
-        logger.info('success');
-    };
+        let formattedPaths = getListOfFilesInPaths()
+        let collectionNames = []
 
-};
+        if (formattedPaths instanceof Object) {
+            for (let path of formattedPaths) {
+                collectionNames = [...collectionNames, ...fs.readdirSync(paths)]
+            }
+        } else {
+            collectionNames = fs.readdirSync(paths)
+        }
 
-module.exports = MongoFixtureLoader;
+        collectionNames = collectionNames.map(name => name.substr(0, name.length - 3))
 
-module.exports.$inject = ['Garden', 'config', 'Logger'];
-module.exports.$tags = ['garden.js', 'fixtures', 'loader', 'loader.mongo'];
+        logger.info('Dropping fixtures: ' + dbUri)
+        wait.forMethod(fixtures, 'clear', collectionNames)
+        logger.info('success')
+    }
+
+}
+
+module.exports = MongoFixtureLoader
+
+module.exports.$inject = ['Garden', 'config', 'Logger']
+module.exports.$tags = ['garden.js', 'fixtures', 'loader', 'loader.mongo']
