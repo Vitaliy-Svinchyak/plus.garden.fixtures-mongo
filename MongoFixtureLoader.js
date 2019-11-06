@@ -2,18 +2,19 @@ let MongoFixtureLoader = function (Garden, config, logger) {
     const Fixtures = require('node-mongodb-fixtures')
     let paths = config.get('fixtures-mongo:fixtures')
     let dbUri = config.get('fixtures-mongo:uri')
+    let wait = Garden.wait
 
     const fixtures = new Fixtures({
         dir: paths,
         filter: '.*',
     })
 
-    this.load = async function () {
+    this.load = function () {
         logger.info('Loading fixtures: ' + dbUri)
 
         try {
-            await fixtures.connect(dbUri)
-            await fixtures.load()
+            wait.forMethod(fixtures, 'connect', dbUri)
+            wait.forMethod(fixtures, 'load')
         } catch (e) {
             console.error(e)
         } finally {
@@ -23,11 +24,11 @@ let MongoFixtureLoader = function (Garden, config, logger) {
         logger.info('success')
     }
 
-    this.drop = async function () {
+    this.drop = function () {
         logger.info('Dropping fixtures: ' + dbUri)
         try {
-            await fixtures.connect(dbUri)
-            await fixtures.unload()
+            wait.forMethod(fixtures, 'connect', dbUri)
+            wait.forMethod(fixtures, 'unload')
         } catch (e) {
             console.error(e)
         } finally {
