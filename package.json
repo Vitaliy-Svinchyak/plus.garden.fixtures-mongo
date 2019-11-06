@@ -13,8 +13,9 @@
   "author": "Vladimir Polyakov",
   "license": "MIT",
   "dependencies": {
-    "pow-mongodb-fixtures": "0.12.0",
-    "bson": "0.4.23"
+    "bson": "0.4.23",
+    "node-mongodb-fixtures": "^3.0.8",
+    "pow-mongodb-fixtures": "0.12.0"
   },
   "repository": {
     "type": "git",

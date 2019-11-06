@@ -1,71 +1,39 @@
 let MongoFixtureLoader = function (Garden, config, logger) {
-
-    let wait = Garden.wait
-    let dbUri = config.get('fixtures-mongo:uri')
-    let fixtures = require('pow-mongodb-fixtures').connect(dbUri)
+    const Fixtures = require('node-mongodb-fixtures')
     let paths = config.get('fixtures-mongo:fixtures')
-    let fs = require('fs')
+    let dbUri = config.get('fixtures-mongo:uri')
 
-    function isAbsolute (path) {
-        return /^\//.test(path)
-    }
+    const fixtures = new Fixtures({
+        dir: paths,
+        filter: '.*',
+    })
 
-    function getListOfFilesInPaths () {
-        let resultPaths
+    this.load = async function () {
+        logger.info('Loading fixtures: ' + dbUri)
 
-        if (paths instanceof Object) {
-            resultPaths = []
-            for (let key in paths) {
-                let path = paths[key]
-
-                if (!isAbsolute(path)) {
-                    resultPaths.push(config.get('root_dir') + '/' + path)
-                }
-            }
-        } else {
-            if (!isAbsolute(paths)) {
-                resultPaths = config.get('root_dir') + '/' + paths
-            }
+        try {
+            await fixtures.connect(dbUri)
+            await fixtures.load()
+        } catch (e) {
+            console.error(e)
+        } finally {
+            fixtures.disconnect()
         }
 
-        return resultPaths
-    }
-
-    function loadPath (path) {
-        logger.info('fixtures: ' + path)
-        wait.forMethod(fixtures, 'load', path)
         logger.info('success')
     }
 
-    this.load = function () {
-        logger.info('Loading fixtures: ' + dbUri)
-        let formattedPaths = getListOfFilesInPaths()
-
-        if (formattedPaths instanceof Object) {
-            for (let path of paths) {
-                loadPath(path)
-            }
-        } else {
-            loadPath(formattedPaths)
-        }
-    }
-
-    this.drop = function () {
-        let formattedPaths = getListOfFilesInPaths()
-        let collectionNames = []
-
-        if (formattedPaths instanceof Object) {
-            for (let path of formattedPaths) {
-                collectionNames = [...collectionNames, ...fs.readdirSync(paths)]
-            }
-        } else {
-            collectionNames = fs.readdirSync(paths)
-        }
-
-        collectionNames = collectionNames.map(name => name.substr(0, name.length - 3))
-
+    this.drop = async function () {
         logger.info('Dropping fixtures: ' + dbUri)
-        wait.forMethod(fixtures, 'clear', collectionNames)
+        try {
+            await fixtures.connect(dbUri)
+            await fixtures.unload()
+        } catch (e) {
+            console.error(e)
+        } finally {
+            fixtures.disconnect()
+        }
+
         logger.info('success')
     }
 
