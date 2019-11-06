@@ -9,12 +9,12 @@ let MongoFixtureLoader = function (Garden, config, logger) {
         filter: '.*',
     })
 
-    this.load = function () {
+    this.load = async function () {
         logger.info('Loading fixtures: ' + dbUri)
 
         try {
-            wait.forMethod(fixtures, 'connect', dbUri)
-            wait.forMethod(fixtures, 'load')
+            await fixtures.connect(dbUri)
+            await fixtures.load()
         } catch (e) {
             console.error(e)
         } finally {
@@ -24,11 +24,11 @@ let MongoFixtureLoader = function (Garden, config, logger) {
         logger.info('success')
     }
 
-    this.drop = function () {
+    this.drop = async function () {
         logger.info('Dropping fixtures: ' + dbUri)
         try {
-            wait.forMethod(fixtures, 'connect', dbUri)
-            wait.forMethod(fixtures, 'unload')
+            await fixtures.connect(dbUri)
+            await fixtures.unload()
         } catch (e) {
             console.error(e)
         } finally {
