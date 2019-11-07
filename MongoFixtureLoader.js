@@ -2,7 +2,6 @@ let MongoFixtureLoader = function (Garden, config, logger) {
     const Fixtures = require('node-mongodb-fixtures')
     let paths = config.get('fixtures-mongo:fixtures')
     let dbUri = config.get('fixtures-mongo:uri')
-    let wait = Garden.wait
 
     const fixtures = new Fixtures({
         dir: paths,
