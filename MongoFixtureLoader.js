@@ -6,6 +6,7 @@ let MongoFixtureLoader = function (Garden, config, logger) {
     const fixtures = new Fixtures({
         dir: paths,
         filter: '.*',
+        mute: true
     })
 
     this.load = async function () {
