@@ -2,23 +2,17 @@ let MongoFixtureLoader = function (Garden, config, logger) {
     const Fixtures = require('node-mongodb-fixtures')
 
     Fixtures.prototype.clear = function () {
-        const assert = require('assert')
         const fs = require('fs')
         const path = require('path')
+        const util = require('util')
 
-        const readdir = Promise.promisify(fs.readdir)
-
-        assert(this._db, 'must call connect')
+        const readdir = util.promisify(fs.readdir)
 
         return readdir(this._dir).then(files => {
             const promises = files.filter(this._filterFiles).map(file => {
                 const parse = path.parse(file)
                 const collectionName = parse.name
                 const ext = parse.ext
-
-                if (!isSupportedExt(ext) || isScript(collectionName, ext)) {
-                    return null
-                }
 
                 const dropCollection = this._db.collection(collectionName).
                     remove({}).
@@ -27,7 +21,7 @@ let MongoFixtureLoader = function (Garden, config, logger) {
                     })
                 return dropCollection
             })
-            return Promise.all(promises).tap(() => log(this._mute, '[done ] *unload all')).then(() => this)
+            return Promise.all(promises).then(() => this)
         })
     }
 
