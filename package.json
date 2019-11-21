@@ -14,8 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "bson": "0.4.23",
-    "node-mongodb-fixtures": "^3.0.8",
-    "pow-mongodb-fixtures": "0.12.0"
+    "node-mongodb-fixtures": "^3.0.8"
   },
   "repository": {
     "type": "git",
